@@ -27,7 +27,7 @@ module RailsAdmin
     def for_model
       @authorization_adapter.authorize(:see_history) if @authorization_adapter
       @page_type = @abstract_model.pretty_name.downcase
-      @page_name = t("admin.history.page_name", :name => @model_config.label)
+      @page_name = t("admin.history.page_name", :name => (@model_config.label.start_with? 't.') ? t(@model_config.label) : @model_config.label)
       @general = true
       @current_page = params[:page].try(:to_i) || 1
 

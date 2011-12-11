@@ -39,7 +39,7 @@ module RailsAdmin
       @authorization_adapter.authorize(:list, @abstract_model) if @authorization_adapter
 
       @page_type = @abstract_model.pretty_name.downcase
-      @page_name = t("admin.list.select", :name => @model_config.label.downcase)
+      @page_name = t("admin.list.select", :name => (@model_config.label.starts_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label.downcase)
 
       @objects, @current_page, @page_count, @record_count = list_entries
       @schema ||= { :only => @model_config.list.visible_fields.map {|f| f.name } }
@@ -91,7 +91,7 @@ module RailsAdmin
       if object_params = params[@abstract_model.to_param]
         @object.set_attributes(@object.attributes.merge(object_params), _attr_accessible_role)
       end
-      @page_name = t("admin.actions.create").capitalize + " " + @model_config.label.downcase
+      @page_name = t("admin.actions.create").capitalize + " " + ((@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label.downcase)
       @page_type = @abstract_model.pretty_name.downcase
       respond_to do |format|
         format.html
@@ -110,7 +110,7 @@ module RailsAdmin
         @authorization_adapter.authorize(:create, @abstract_model, @object)
       end
       @object.set_attributes(@attributes, _attr_accessible_role)
-      @page_name = t("admin.actions.create").capitalize + " " + @model_config.label.downcase
+      @page_name = t("admin.actions.create").capitalize + " " + ((@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label.downcase)
       @page_type = @abstract_model.pretty_name.downcase
 
       if @object.save
@@ -133,13 +133,13 @@ module RailsAdmin
 
     def show
       @authorization_adapter.authorize(:show, @abstract_model, @object) if @authorization_adapter
-      @page_name = t("admin.show.page_name", :name => @model_config.label.downcase)
+      @page_name = t("admin.show.page_name", :name => (@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label.downcase)
       @page_type = @abstract_model.pretty_name.downcase
     end
 
     def edit
       @authorization_adapter.authorize(:edit, @abstract_model, @object) if @authorization_adapter
-      @page_name = t("admin.actions.update").capitalize + " " + @model_config.label.downcase
+      @page_name = t("admin.actions.update").capitalize + " " + ((@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label.downcase)
       @page_type = @abstract_model.pretty_name.downcase
       respond_to do |format|
         format.html
@@ -153,7 +153,7 @@ module RailsAdmin
       @cached_assocations_hash = associations_hash
       @modified_assoc = []
 
-      @page_name = t("admin.actions.update").capitalize + " " + @model_config.label.downcase
+      @page_name = t("admin.actions.update").capitalize + " " + ((@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label.downcase)
       @page_type = @abstract_model.pretty_name.downcase
 
       @old_object = @object.dup
@@ -183,7 +183,7 @@ module RailsAdmin
     def delete
       @authorization_adapter.authorize(:delete, @abstract_model, @object) if @authorization_adapter
 
-      @page_name = t("admin.actions.delete").capitalize + " " + @model_config.label.downcase
+      @page_name = t("admin.actions.delete").capitalize + " " + ((@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label.downcase)
       @page_type = @abstract_model.pretty_name.downcase
       respond_to do |format|
         format.html
@@ -196,9 +196,9 @@ module RailsAdmin
 
       if @object.destroy
         AbstractHistory.create_history_item("Destroyed #{@model_config.with(:object => @object).object_label}", @object, @abstract_model, _current_user)
-        flash[:notice] = t("admin.flash.successful", :name => @model_config.label, :action => t("admin.actions.deleted"))
+        flash[:notice] = t("admin.flash.successful", :name => (@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label, :action => t("admin.actions.deleted"))
       else
-        flash[:error] = t("admin.flash.error", :name => @model_config.label, :action => t("admin.actions.deleted"))
+        flash[:error] = t("admin.flash.error", :name => (@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label, :action => t("admin.actions.deleted"))
       end
 
       redirect_to list_path(:model_name => @abstract_model.to_param)
@@ -217,7 +217,7 @@ module RailsAdmin
         @schema = params[:schema].symbolize if params[:schema] # to_json and to_xml expect symbols for keys AND values.
         list
       else
-        @page_name = t("admin.actions.export").capitalize + " " + @model_config.label.downcase
+        @page_name = t("admin.actions.export").capitalize + " " + ((@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label.downcase)
         @page_type = @abstract_model.pretty_name.downcase
 
         render :action => 'export'
@@ -236,7 +236,7 @@ module RailsAdmin
 
     def bulk_delete
       @authorization_adapter.authorize(:bulk_delete, @abstract_model) if @authorization_adapter
-      @page_name = t("admin.actions.delete").capitalize + " " + @model_config.label.downcase
+      @page_name = t("admin.actions.delete").capitalize + " " + ((@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label.downcase)
       @page_type = @abstract_model.pretty_name.downcase
 
       @bulk_objects, @current_page, @page_count, @record_count = list_entries
@@ -260,7 +260,7 @@ module RailsAdmin
       end
 
       unless destroyed.empty?
-        flash[:notice] = t("admin.flash.successful", :name => pluralize(destroyed.count, @model_config.label), :action => t("admin.actions.deleted"))
+        flash[:notice] = t("admin.flash.successful", :name => (@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1]) : pluralize(destroyed.count, @model_config.label), :action => t("admin.actions.deleted"))
       end
 
       unless not_destroyed.empty?
@@ -478,7 +478,7 @@ module RailsAdmin
     end
 
     def redirect_to_on_success
-      notice = t("admin.flash.successful", :name => @model_config.label, :action => t("admin.actions.#{params[:action]}d"))
+      notice = t("admin.flash.successful", :name => (@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label, :action => t("admin.actions.#{params[:action]}d"))
       if params[:_add_another]
         redirect_to new_path, :notice => notice
       elsif params[:_add_edit]
@@ -491,7 +491,7 @@ module RailsAdmin
     def handle_save_error whereto = :new
       action = params[:action]
 
-      flash.now[:error] = t("admin.flash.error", :name => @model_config.label, :action => t("admin.actions.#{action}d"))
+      flash.now[:error] = t("admin.flash.error", :name => (@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1] + '.one') : @model_config.label, :action => t("admin.actions.#{action}d"))
       flash.now[:error] += ". #{@object.errors[:base].to_sentence}" unless @object.errors[:base].blank?
 
       respond_to do |format|

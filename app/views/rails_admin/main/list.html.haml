@@ -144,7 +144,7 @@
             = link_to(t("admin.list.show_all"), list_path(params.merge(:all => true)), :class => "showall", :method => :get, :remote => true)
         .left(style="white-space: nowrap; padding-top:0.7em;")
           = @record_count
-          = @model_config.abstract_model.model.model_name.human(:count => @record_count, :default => @record_count != 1 ? @model_config.label.downcase.pluralize : @model_config.label.downcase)
+          = @model_config.abstract_model.model.model_name.human(:count => @record_count, :default => @record_count != 1 ? ((@model_config.label_plural.start_with? 't.' ) ? t(@model_config.label_plural[2..-1]) : @model_config.label.downcase.pluralize) : (@model_config.label.start_with? 't.') ? t(@model_config.label[2..-1]) : @model_config.label.downcase)
 
         .columns.wat-cf
           .column.right
