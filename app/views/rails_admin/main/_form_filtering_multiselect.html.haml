@@ -40,7 +40,7 @@
   sortable: #{field.orderable ? 'true' : 'false'},
   regional: {
   chooseAll: "#{t("admin.new.chose_all")}",
-  chosen: "#{t("admin.new.chosen", :name => config.label_plural)}",
+  chosen: "#{t("admin.new.chosen", :name => (config.label_plural.start_with? 't.') ? t(config.label_plural[2..-1] + '.few') : config.label_plural)}",
   clearAll:  "#{t("admin.new.clear_all")}",
   selectChoice: "#{t("admin.new.select_choice")}",
   up: "#{t("admin.new.up")}",
